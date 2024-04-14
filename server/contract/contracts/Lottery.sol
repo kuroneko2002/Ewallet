@@ -1,62 +1,68 @@
 // SPDX-License-Identifier: GPL-3.0
-
 pragma solidity >=0.7.0 <0.9.0;
 
 import "hardhat/console.sol";
 
 contract Lottery {
-    address public manager;
-    address payable[] public players;
-    address payable public winner;
-
+    address public owner;
+    address[] public players;
+    uint public minimumBet;
+    uint public randomNumber;
+    bool public lotteryOpen;
+    
+    event NewPlayer(address indexed player, uint indexed amount);
+    event LotteryClosed(address indexed winner, uint indexed amountWon);
+    
     constructor() {
-        manager = msg.sender;
+        owner = msg.sender;
+        minimumBet = 1 ether;
+        lotteryOpen = true;
     }
-
-    function participate() public payable {
-        require(msg.value == 1 ether, "Please pay 1 ether only");
-        players.push(payable(msg.sender));
+    
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner can call this function");
+        _;
     }
-
-    function getManager() public view returns (address) {
-        return manager;
+    
+    modifier onlyWhenOpen() {
+        require(lotteryOpen, "Lottery is not open");
+        _;
     }
-
-    function getPlayers() public view returns (address payable[] memory) {
-        console.log("PLAYERS:");
-        for (uint256 i = 0; i < players.length; i++) {
-            console.log(players[i]);
-        }
-
+    
+    function participate() public payable onlyWhenOpen {
+        //require(msg.value >= minimumBet, "Not enough Ether sent");
+        players.push(msg.sender);
+        emit NewPlayer(msg.sender, minimumBet);
+    }
+    
+    function pickWinner() public onlyOwner onlyWhenOpen {
+        require(players.length > 0, "No players in the lottery");
+        uint seed = block.timestamp + block.difficulty + players.length;
+        randomNumber = uint(keccak256(abi.encodePacked(blockhash(block.number - 1), seed))) % players.length;
+        
+        address winner = players[randomNumber];
+        uint amountWon = address(this).balance - minimumBet * (players.length - 1); // deducted cost
+        
+        payable(winner).transfer(amountWon);
+        emit LotteryClosed(winner, amountWon);
+        
+        delete players;
+        lotteryOpen = false;
+    }
+    
+    function withdrawFunds() public onlyOwner {
+        payable(owner).transfer(address(this).balance);
+    }
+    
+    function getPlayers() public view returns (address[] memory) {
         return players;
     }
 
-    function getBanlance() public view returns(uint) {
-        require(manager == msg.sender, "You are not the manager");
+    function getManager() public view returns (address)  {
+        return owner;
+    }
+
+    function getBanlance() public view returns (uint) {
         return address(this).balance;
-    }
-
-    function random() internal view returns(uint){
-        return uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, players.length)));
-    }
-
-    function pickWinner() public returns (address) {
-        require(manager == msg.sender, "You are not the manager");
-        require(players.length >= 3, "Players are less than 3");
-        
-        uint r = random();
-        uint index = r%players.length;
-        winner = players[index];
-        winner.transfer(getBanlance());
-
-        address resWinner = winner;
-
-        console.log("WINNER:");
-        console.log(resWinner);
-
-        players = new address payable[](0);
-        winner = payable(address(0));
-
-        return resWinner;
     }
 }
