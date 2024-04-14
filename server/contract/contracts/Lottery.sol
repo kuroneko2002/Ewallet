@@ -30,9 +30,9 @@ contract Lottery {
     }
     
     function participate() public payable onlyWhenOpen {
-        //require(msg.value >= minimumBet, "Not enough Ether sent");
+        require(msg.value >= minimumBet, "Not enough Ether sent");
         players.push(msg.sender);
-        emit NewPlayer(msg.sender, minimumBet);
+        emit NewPlayer(msg.sender, msg.value);
     }
     
     function pickWinner() public onlyOwner onlyWhenOpen {
@@ -41,7 +41,9 @@ contract Lottery {
         randomNumber = uint(keccak256(abi.encodePacked(blockhash(block.number - 1), seed))) % players.length;
         
         address winner = players[randomNumber];
-        uint amountWon = address(this).balance - minimumBet * (players.length - 1); // deducted cost
+        uint balance = address(this).balance;
+        uint deducted = balance / players.length; // lottery fee and belong to lottery owner by call withdrawFund function
+        uint amountWon = balance - deducted;
         
         payable(winner).transfer(amountWon);
         emit LotteryClosed(winner, amountWon);
