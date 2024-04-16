@@ -48,7 +48,7 @@ export const contractAbi = [
   },
   {
     "inputs": [],
-    "name": "getBanlance",
+    "name": "getBalance",
     "outputs": [
       {
         "internalType": "uint256",
@@ -134,8 +134,14 @@ export const contractAbi = [
   {
     "inputs": [],
     "name": "pickWinner",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -174,7 +180,7 @@ export const contractAbi = [
     "inputs": [],
     "name": "withdrawFunds",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   }
 ];

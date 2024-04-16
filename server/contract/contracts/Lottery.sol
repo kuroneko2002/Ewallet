@@ -35,7 +35,7 @@ contract Lottery {
         emit NewPlayer(msg.sender, msg.value);
     }
     
-    function pickWinner() public onlyOwner onlyWhenOpen {
+    function pickWinner() public payable onlyOwner onlyWhenOpen returns (address) {
         require(players.length > 0, "No players in the lottery");
         uint seed = block.timestamp + block.difficulty + players.length;
         randomNumber = uint(keccak256(abi.encodePacked(blockhash(block.number - 1), seed))) % players.length;
@@ -50,9 +50,11 @@ contract Lottery {
         
         delete players;
         lotteryOpen = false;
+
+        return winner;
     }
     
-    function withdrawFunds() public onlyOwner {
+    function withdrawFunds() public payable onlyOwner {
         payable(owner).transfer(address(this).balance);
     }
     
@@ -64,7 +66,7 @@ contract Lottery {
         return owner;
     }
 
-    function getBanlance() public view returns (uint) {
+    function getBalance() public view returns (uint) {
         return address(this).balance;
     }
 }

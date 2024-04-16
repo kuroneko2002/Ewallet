@@ -59,11 +59,11 @@ const Dashboard = () => {
 
   const handleGetBalance = async () => {
     try {
-      const balance = await contract.methods.getBanlance().call();
-      console.log("Contract banlance:", balance);
-      setBalance(balance.toString);
+      const balance = await contract.methods.getBalance().call();
+      console.log("Contract balance:", balance);
+      setBalance((balance / 1000000000000000000n).toString() + " ETH");
     } catch (error) {
-      console.error("Error calling getManager():", error);
+      console.error("Error calling getBalance():", error);
     }
   };
 
@@ -76,6 +76,10 @@ const Dashboard = () => {
         });
 
         console.log("Participation successful!");
+
+        const balance = await contract.methods.getBalance().call();
+        console.log("Contract balance:", balance);
+        setBalance((balance / 1000000000000000000n).toString() + " ETH");
       } catch (error) {
         console.error("Error participating:", error);
       }
@@ -94,15 +98,15 @@ const Dashboard = () => {
 
   const pickWinner = async () => {
     try {
-      const manager = await contract.methods.manager().call();
-      const playersCount = await getPlayers();
+      const manager = await contract.methods.getManager().call();
+      const playersCount = await contract.methods.getPlayers().call();
 
       if (manager.toLowerCase() !== selectedAccount.toLowerCase()) {
         console.error("You are not the manager");
         return;
       }
 
-      if (playersCount < 3) {
+      if (playersCount.length < 3) {
         console.error("Players are less than 3");
         return;
       }
@@ -113,7 +117,33 @@ const Dashboard = () => {
 
       console.log("Winner:", winner);
       setWinner(winner);
-      setPlayers([]);
+      const players = await contract.methods.getPlayers().call();
+      setPlayers(players);
+
+      const balance = await contract.methods.getBalance().call();
+      console.log("Contract balance:", balance);
+      setBalance((balance / 1000000000000000000n).toString() + " ETH");
+    } catch (error) {
+      console.error("Error calling pickWinner():", error);
+    }
+  };
+
+  const withdrawFunds = async () => {
+    try {
+      const manager = await contract.methods.getManager().call();
+
+      if (manager.toLowerCase() !== selectedAccount.toLowerCase()) {
+        console.error("You are not the manager");
+        return;
+      }
+
+      const withdraw = await contract.methods
+        .withdrawFunds()
+        .call({ from: manager });
+
+      const balance = await contract.methods.getBalance().call();
+      console.log("Contract balance:", balance);
+      setBalance((balance / 1000000000000000000n).toString() + " ETH");
     } catch (error) {
       console.error("Error calling pickWinner():", error);
     }
@@ -137,6 +167,7 @@ const Dashboard = () => {
       <button onClick={handleParticipant}>Participant</button>
       <button onClick={getPlayers}>Get players</button>
       <button onClick={pickWinner}>Pick winner</button>
+      <button onClick={withdrawFunds}>Withdraw Fund</button>
       <div>
         <h2>Balance: {balance}</h2>
         <h2>Winner: {winner}</h2>
