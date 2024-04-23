@@ -4,7 +4,7 @@ const Home = () => {
   };
 
   return (
-    <div>
+    <div className="bg-primary-purple">
       <section className="relative py-[100px] bg-primary-purple">
         <div className="absolute inset-0 bg-[url('/assets/bg2.png')] opacity-20"></div>
         <div className="relative mx-auto max-w-screen-lg p-6">
