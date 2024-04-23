@@ -6,6 +6,9 @@ const Dashboard2 = () => {
   const [selectedAccount, setSelectedAccount] = useState("");
   const [manager, setManager] = useState("");
   const [contract, setContract] = useState(null);
+  const [players, setPlayers] = useState([]);
+  const [balance, setBalance] = useState(0);
+  const [winner, setWinner] = useState("");
 
   window.ethereum.on("accountsChanged", (accounts) => {
     setSelectedAccount(accounts[0]);
@@ -54,15 +57,86 @@ const Dashboard2 = () => {
   };
 
   const handleParticipant = async () => {
-    if (contract) {
+    if (contract && selectedAccount) {
       try {
+        const signer = provider.getSigner(selectedAccount);
+        const contractWithSigner = contract.connect(signer);
+        console.log(await contract.getManager());
+  
         const amountToSend = ethers.utils.parseEther("1");
-        const tx = await contract.participate({ value: amountToSend });
+        const tx = await contractWithSigner.participate({ value: amountToSend });
         await tx.wait();
 
+        await handleGetPlayers();
+        await handleGetBalance();
+  
         console.log("Participation successful!");
       } catch (error) {
         console.error("Error participating:", error);
+      }
+    } else {
+      console.error("Contract instance or selected account not available.");
+    }
+  };
+
+  const handlePickWinner = async () => {
+    if (contract) {
+      try {
+        const signer = provider.getSigner(selectedAccount);
+        const contractWithSigner = contract.connect(signer);
+        const tx = await contractWithSigner.pickWinner();
+        await tx.wait();
+
+        setWinner(await contract.getWinner());
+
+        await handleGetPlayers();
+        await handleGetBalance();
+
+        console.log("Winner picked and lottery closed!");
+      } catch (error) {
+        console.error("Error picking winner:", error);
+      }
+    }
+  };
+
+  const handleWithdrawFunds = async () => {
+    if (contract) {
+      try {
+        const signer = provider.getSigner(selectedAccount);
+        const contractWithSigner = contract.connect(signer);
+        const tx = await contractWithSigner.withdrawFunds();
+        await tx.wait();
+
+        await handleGetPlayers();
+        await handleGetBalance();
+
+        console.log("Funds withdrawn from the contract!");
+      } catch (error) {
+        console.error("Error withdrawing funds:", error);
+      }
+    }
+  };
+
+  const handleGetPlayers = async () => {
+    if (contract) {
+      try {
+        const players = await contract.getPlayers();
+        console.log("Players:", players);
+        setPlayers(players);
+      } catch (error) {
+        console.error("Error calling getPlayers():", error);
+      }
+    }
+  };
+
+  const handleGetBalance = async () => {
+    if (contract) {
+      try {
+        const balance = await contract.getBalance();
+        console.log("Contract balance:", ethers.utils.formatEther(balance));
+        setBalance(balance);
+      } catch (error) {
+        console.error("Error calling getBalance():", error);
       }
     }
   };
@@ -83,6 +157,20 @@ const Dashboard2 = () => {
       </h3>
       <button onClick={handleGetManager}>Get Manager</button>
       <button onClick={handleParticipant}>Participant</button>
+      <button onClick={handlePickWinner}>Pick Winner & Close Lottery</button>
+      <button onClick={handleWithdrawFunds}>Withdraw Funds</button>
+      <button onClick={handleGetPlayers}>Get Players</button>
+      <button onClick={handleGetBalance}>Get Balance</button>
+
+      <h3>Players:</h3>
+      <ul>
+        {players.map((player, index) => (
+          <li key={index}>{player}</li>
+        ))}
+      </ul>
+
+      <h3>Contract Balance: {ethers.utils.formatEther(balance)} ETH</h3>
+      <h3>Last Winner: {winner}</h3>
     </div>
   );
 };

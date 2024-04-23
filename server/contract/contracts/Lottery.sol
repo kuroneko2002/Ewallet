@@ -6,6 +6,7 @@ import "hardhat/console.sol";
 contract Lottery {
     address public owner;
     address[] public players;
+    address public winner;
     uint public minimumBet;
     uint public randomNumber;
     bool public lotteryOpen;
@@ -35,12 +36,12 @@ contract Lottery {
         emit NewPlayer(msg.sender, msg.value);
     }
     
-    function pickWinner() public payable onlyOwner onlyWhenOpen returns (address) {
+    function pickWinner() public payable onlyOwner onlyWhenOpen {
         require(players.length > 0, "No players in the lottery");
         uint seed = block.timestamp + block.difficulty + players.length;
         randomNumber = uint(keccak256(abi.encodePacked(blockhash(block.number - 1), seed))) % players.length;
         
-        address winner = players[randomNumber];
+        winner = players[randomNumber];
         uint balance = address(this).balance;
         uint deducted = balance / players.length; // lottery fee and belong to lottery owner by call withdrawFund function
         uint amountWon = balance - deducted;
@@ -50,8 +51,6 @@ contract Lottery {
         
         delete players;
         lotteryOpen = false;
-
-        return winner;
     }
     
     function withdrawFunds() public payable onlyOwner {
@@ -68,5 +67,9 @@ contract Lottery {
 
     function getBalance() public view returns (uint) {
         return address(this).balance;
+    }
+
+    function getWinner() public view returns (address) {
+        return winner;
     }
 }
