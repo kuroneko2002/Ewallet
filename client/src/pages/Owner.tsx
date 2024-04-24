@@ -1,93 +1,96 @@
-import { useEffect, useState } from "react";
-import Marquee from "react-fast-marquee";
-import ReactCardFlip from "react-card-flip";
+import { useState } from "react";
+import Dice from "react-dice-roll";
+
+import PickWinnerCard from "@/components/PickWinnerCard";
 
 const Owner = () => {
-  const [value, setValue] = useState<string>("");
-  const [isFlipped, setIsFlipped] = useState<boolean>(true);
+  const players: string[] = [
+    "0xAbc123456mnq",
+    "0xAbc123457mnq",
+    "0xAbc123458mnq",
+  ];
 
-  const handlePlay = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(value);
+  // const [players, setPlayers] = useState<string[]>([
+  //   "0xAbc123456mnq",
+  //   "0xAbc123457mnq",
+  //   "0xAbc123458mnq",
+  // ]);
+  // const [winner, setWinner] = useState<number>(0);
+  const [diceValue, setDiceValue] = useState<number>(0);
 
-    setValue("");
+  const handleGetPlayers = () => {
+    console.log("Get players...");
   };
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setIsFlipped(!isFlipped);
-    }, 1000);
+  const handlePickWinner = (value: number) => {
+    console.log("Pick winner...");
 
-    return () => {
-      clearInterval(timer);
-    };
-  });
+    setDiceValue(value);
+  };
 
   return (
     <div className="bg-primary-purple">
-      <div className="my-10 py-4 w-full bg-secondary-purple">
-        <Marquee>
-          <div className="flex items-center gap-3 text-xl font-bold">
-            <h1 className="text-primary-yellow">Last winner:</h1>
-            <h1>0xAbczyx123456</h1>
-          </div>
-        </Marquee>
-      </div>
       <section className="mx-auto max-w-screen-lg p-6">
-        <form
-          className="bg-secondary-purple p-4 rounded-xl"
-          onSubmit={(e) => {
-            handlePlay(e);
-          }}
-        >
+        <div className="bg-secondary-purple p-4 rounded-xl">
           <h1 className="text-[50px] font-bold text-center">
-            The Next Turn Started
+            Contract Control
           </h1>
           <div className="mt-10 w-full flex gap-5 flex-wrap items-center justify-between">
             <div className="w-[100%] md:w-[48%] border border-gray-500 p-4 rounded-xl">
-              <h1 className="text-xl font-bold">Wallet Address</h1>
-              <p className="mt-5 max-w-[500px] truncate">0xAbczyx123456</p>
+              <h1 className="text-xl font-bold">Contract Address</h1>
+              <p className="text-2xl mt-5 max-w-[500px] truncate">
+                0xAbczyx123456
+              </p>
             </div>
             <div className="w-[100%] md:w-[48%] border border-gray-500 p-4 rounded-xl">
               <h1 className="text-xl font-bold">Current Balance</h1>
-              <p className="mt-5 max-w-[500px] truncate">0xAbczyx123456</p>
+              <p className="text-2xl mt-5 max-w-[500px] truncate">5 ETH</p>
             </div>
           </div>
-          <div className="relative mt-10 w-full flex">
-            <input
-              placeholder="Transfer ETH to play..."
-              className="text-xl w-full px-4 py-2 bg-primary-purple border border-gray-500 rounded-md"
-              value={value}
-              onChange={(e) => {
-                setValue(e.target.value);
-              }}
-            />
-            <div className="h-full absolute right-0 bg-gradient-to-b from-primary-yellow to-secondary-yellow py-3 px-4 rounded-r-md">
-              ETH
+          <div className="my-10 flex flex-col gap-8">
+            <div className="flex items-center gap-5">
+              <h1 className="text-3xl font-bold">Player List</h1>
+              <button
+                className="bg-gradient-to-b from-primary-yellow to-secondary-yellow px-4 py-2 rounded-md text-xl font-bold"
+                onClick={() => {
+                  handleGetPlayers();
+                }}
+              >
+                Click to get
+              </button>
+            </div>
+            <div className="border border-gray-500 p-4 rounded-xl flex flex-col gap-3">
+              {players?.map((player: string) => {
+                return (
+                  <p key={player} className="text-2xl max-w-[500px] truncate">
+                    {player}
+                  </p>
+                );
+              })}
             </div>
           </div>
-          <div className="mt-10 flex justify-center">
-            <ReactCardFlip
-              isFlipped={isFlipped}
-              infinite={true}
-              flipDirection="horizontal"
-            >
-              <img
-                className="w-[250px]"
-                src="assets/head.png"
-                alt="card-head"
-              />
-              <img
-                className="w-[250px]"
-                src="assets/tail.png"
-                alt="card-tail"
-              />
-            </ReactCardFlip>
+          <div className="my-10 flex flex-col gap-8">
+            <div className="flex items-center gap-5">
+              <h1 className="text-3xl font-bold">Pick Winner</h1>
+            </div>
+            <div className="flex justify-center">
+              {diceValue !== 0 ? (
+                <PickWinnerCard
+                  diceValue={diceValue}
+                  setDiceValue={setDiceValue}
+                />
+              ) : (
+                <div className="flex flex-col items-center gap-12">
+                  <Dice
+                    size={150}
+                    onRoll={(value) => handlePickWinner(value)}
+                  />
+                  <p className="text-gray-400">Click dice to pick winner</p>
+                </div>
+              )}
+            </div>
           </div>
-          <button className="w-full mt-10 bg-gradient-to-b from-primary-yellow to-secondary-yellow px-4 py-2 rounded-md text-[30px] font-bold">
-            Play Now
-          </button>
-        </form>
+        </div>
       </section>
     </div>
   );
