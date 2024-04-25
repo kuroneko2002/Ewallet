@@ -29,6 +29,11 @@ contract Lottery {
         require(lotteryOpen, "Lottery is not open");
         _;
     }
+
+    modifier onlyWhenClose() {
+        require(lotteryOpen == false, "Lottery is open");
+        _;
+    }
     
     function participate() public payable onlyWhenOpen {
         require(msg.value >= minimumBet, "Not enough Ether sent");
@@ -53,8 +58,12 @@ contract Lottery {
         lotteryOpen = false;
     }
     
-    function withdrawFunds() public payable onlyOwner {
+    function withdrawFunds() public payable onlyOwner onlyWhenClose {
         payable(owner).transfer(address(this).balance);
+    }
+
+    function reopenLottery() public onlyOwner onlyWhenClose {
+        lotteryOpen = true;
     }
     
     function getPlayers() public view returns (address[] memory) {
@@ -72,4 +81,8 @@ contract Lottery {
     function getWinner() public view returns (address) {
         return winner;
     }
+    
+    function getIsOpen() public view returns (bool) {
+        return lotteryOpen;
+    }    
 }

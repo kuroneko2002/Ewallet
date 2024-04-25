@@ -9,6 +9,7 @@ const Dashboard2 = () => {
   const [players, setPlayers] = useState([]);
   const [balance, setBalance] = useState(0);
   const [winner, setWinner] = useState("");
+  const [isOpen, setIsOpen] = useState(true);
 
   window.ethereum.on("accountsChanged", (accounts) => {
     setSelectedAccount(accounts[0]);
@@ -36,6 +37,7 @@ const Dashboard2 = () => {
         );
 
         setContract(contractIns);
+        setIsOpen(await contractIns.getIsOpen());
 
         console.log("CONNECTED METAMASK");
       } catch (error) {
@@ -88,7 +90,7 @@ const Dashboard2 = () => {
         await tx.wait();
 
         setWinner(await contract.getWinner());
-
+        setIsOpen(await contract.getIsOpen());
         await handleGetPlayers();
         await handleGetBalance();
 
@@ -141,6 +143,21 @@ const Dashboard2 = () => {
     }
   };
 
+  const handleReopen = async () => {
+    if (contract) {
+      try {
+        const signer = provider.getSigner(selectedAccount);
+        const contractWithSigner = contract.connect(signer);
+        const tx = await contractWithSigner.reopenLottery();
+        await tx.wait();
+        console.log(await contract.getIsOpen());
+        setIsOpen(await contract.getIsOpen());
+      } catch (error) {
+        console.error("Error calling getBalance():", error);
+      }
+    }
+  };
+
   useEffect(() => {
     connectToMetaMask();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -161,6 +178,7 @@ const Dashboard2 = () => {
       <button onClick={handleWithdrawFunds}>Withdraw Funds</button>
       <button onClick={handleGetPlayers}>Get Players</button>
       <button onClick={handleGetBalance}>Get Balance</button>
+      <button onClick={handleReopen}>Reopen Lottery</button>
 
       <h3>Players:</h3>
       <ul>
@@ -171,6 +189,7 @@ const Dashboard2 = () => {
 
       <h3>Contract Balance: {ethers.utils.formatEther(balance)} ETH</h3>
       <h3>Last Winner: {winner}</h3>
+      <h3>Lottery Open: {isOpen ? "true" : "false"}</h3>
     </div>
   );
 };

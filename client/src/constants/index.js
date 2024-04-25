@@ -61,6 +61,19 @@ export const contractAbi = [
   },
   {
     "inputs": [],
+    "name": "getIsOpen",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getManager",
     "outputs": [
       {
@@ -181,6 +194,13 @@ export const contractAbi = [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "reopenLottery",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
