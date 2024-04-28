@@ -1,8 +1,11 @@
-import { connectToMetaMask } from "@/lib/ethers";
+import { useNavigate } from "react-router-dom";
+import { connectToMetaMask, handleGetManager } from "@/lib/ethers";
 import { useEthersStore } from "@/store/ethers.store";
 import { contractAddress, contractAbi } from "@/constants";
 
 const Home = () => {
+  const navigate = useNavigate();
+
   const provider = useEthersStore((state: any) => state.provider);
   const setAccount = useEthersStore((state: any) => state.setAccount);
   const setContract = useEthersStore((state: any) => state.setContract);
@@ -15,6 +18,16 @@ const Home = () => {
       setAccount(res?.account);
       setContract(res?.contractIns);
       setIsOpen(res?.isOpen);
+
+      // Save data to session storage
+      sessionStorage.setItem("metamaskAccount", JSON.stringify(res?.account));
+
+      // Check routing
+      const manager = await handleGetManager(res?.contractIns);
+      console.log(manager);
+
+      if (manager?.manager === res?.account) navigate("/owner");
+      else navigate("/player");
     }
   };
 
