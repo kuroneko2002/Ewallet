@@ -1,6 +1,21 @@
+import { connectToMetaMask } from "@/lib/ethers";
+import { useEthersStore } from "@/store/ethers.store";
+import { contractAddress, contractAbi } from "@/constants";
+
 const Home = () => {
-  const handleLoginWithMetaMask = () => {
-    console.log("Login...");
+  const provider = useEthersStore((state: any) => state.provider);
+  const setAccount = useEthersStore((state: any) => state.setAccount);
+  const setContract = useEthersStore((state: any) => state.setContract);
+  const setIsOpen = useEthersStore((state: any) => state.setIsOpen);
+
+  const handleLoginWithMetaMask = async () => {
+    const res = await connectToMetaMask(provider, contractAddress, contractAbi);
+
+    if (res) {
+      setAccount(res?.account);
+      setContract(res?.contractIns);
+      setIsOpen(res?.isOpen);
+    }
   };
 
   return (
