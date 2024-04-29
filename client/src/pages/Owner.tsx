@@ -1,14 +1,21 @@
 import { useState } from "react";
 import Dice from "react-dice-roll";
+import { useEthersStore } from "@/store/ethers.store";
+import {
+  handleGetPlayers as e_handleGetPlayers,
+  handlePickWinner as e_handlePickWinner,
+} from "@/lib/ethers";
 
 import PickWinnerCard from "@/components/PickWinnerCard";
 
 const Owner = () => {
-  const players: string[] = [
-    "0xAbc123456mnq",
-    "0xAbc123457mnq",
-    "0xAbc123458mnq",
-  ];
+  const contract = useEthersStore((state: any) => state.contract);
+  const provider = useEthersStore((state: any) => state.provider);
+  const account = useEthersStore((state: any) => state.account);
+  const players = useEthersStore((state: any) => state.players);
+
+  const setPlayers = useEthersStore((state: any) => state.setPlayers);
+  
 
   // const [players, setPlayers] = useState<string[]>([
   //   "0xAbc123456mnq",
@@ -18,11 +25,13 @@ const Owner = () => {
   // const [winner, setWinner] = useState<number>(0);
   const [diceValue, setDiceValue] = useState<number>(0);
 
-  const handleGetPlayers = () => {
-    console.log("Get players...");
+  const handleGetPlayers = async () => {
+    const listPlayer = await e_handleGetPlayers(contract);
+    setPlayers(listPlayer);
   };
 
   const handlePickWinner = (value: number) => {
+    e_handlePickWinner(contract, provider, account);
     console.log("Pick winner...");
 
     setDiceValue(value);
