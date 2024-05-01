@@ -62,9 +62,6 @@ export const handleParticipant = async (
       const tx = await contractWithSigner.participate({ value: amountToSend });
       await tx.wait();
 
-      //await handleGetPlayers();
-      //await handleGetBalance();
-
       console.log("Participation successful!");
     } catch (error) {
       console.error("Error participating:", error);
@@ -86,11 +83,6 @@ export const handlePickWinner = async (
       const tx = await contractWithSigner.pickWinner();
       await tx.wait();
 
-      //setWinner(await contract.getWinner());
-      //setIsOpen(await contract.getIsOpen());
-      //await handleGetPlayers();
-      //await handleGetBalance();
-
       console.log("Winner picked and lottery closed!");
     } catch (error) {
       console.error("Error picking winner:", error);
@@ -109,9 +101,6 @@ export const handleWithdrawFunds = async (
       const contractWithSigner = contract.connect(signer);
       const tx = await contractWithSigner.withdrawFunds();
       await tx.wait();
-
-      //await handleGetPlayers();
-      //await handleGetBalance();
 
       console.log("Funds withdrawn from the contract!");
     } catch (error) {
@@ -138,9 +127,20 @@ export const handleGetBalance = async (contract: any) => {
     try {
       const balance = await contract.getBalance();
       console.log("Contract balance:", ethers.utils.formatEther(balance));
-      //setBalance(balance);
+      return balance;
     } catch (error) {
       console.error("Error calling getBalance():", error);
+    }
+  }
+};
+
+export const handleGetWinner = async (contract: any) => {
+  if (contract) {
+    try {
+      const winner = await contract.getWinner();
+      return winner;
+    } catch (error) {
+      console.error("Error calling handleGetWinner():", error);
     }
   }
 };
@@ -156,10 +156,8 @@ export const handleReopen = async (
       const contractWithSigner = contract.connect(signer);
       const tx = await contractWithSigner.reopenLottery();
       await tx.wait();
-      console.log(await contract.getIsOpen());
-      //setIsOpen(await contract.getIsOpen());
     } catch (error) {
-      console.error("Error calling getBalance():", error);
+      console.error("Error calling handleReopen():", error);
     }
   }
 };

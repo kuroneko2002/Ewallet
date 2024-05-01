@@ -1,13 +1,21 @@
 import { useEffect, useState } from "react";
 import Marquee from "react-fast-marquee";
 import ReactCardFlip from "react-card-flip";
+import { useEthersStore } from "@/store/ethers.store";
 import { toast } from "react-toastify";
+import {
+  handleParticipant as e_handleParticipant,
+} from "@/lib/ethers";
 
 import WinnerCard from "@/components/WinnerCard";
 
 const Player = () => {
   const [value, setValue] = useState<string>("");
   const [isFlipped, setIsFlipped] = useState<boolean>(true);
+  const contract = useEthersStore((state: any) => state.contract);
+  const provider = useEthersStore((state: any) => state.provider);
+  const account = useEthersStore((state: any) => state.account);
+  const winner = useEthersStore((state: any) => state.winner);
 
   const handlePlay = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -18,6 +26,7 @@ const Player = () => {
     }
 
     console.log(value);
+    e_handleParticipant(contract, provider, account);
     toast.success("Play next turn successfully!");
 
     setValue("");
@@ -39,7 +48,7 @@ const Player = () => {
         <Marquee>
           <div className="flex items-center gap-3 text-xl font-bold">
             <h1 className="text-primary-yellow">Last winner:</h1>
-            <h1>0xAbczyx123456</h1>
+            <h1>{winner}</h1>
           </div>
         </Marquee>
       </div>

@@ -7,10 +7,14 @@ export const useEthersStore = create((set) => ({
   contract: null,
   isOpen: true,
   players: [],
+  winner: "",
+  balance: "0 ETH",
   setProvider: (value: ethers.providers.JsonRpcProvider) =>
     set({ provider: value }),
   setAccount: (value: string) => set({ account: value }),
   setContract: (value: any) => set({ contract: value }),
   setIsOpen: (value: boolean) => set({ isOpen: value }),
-  setPlayers: (value: string[]) => set({ players: value })
+  setPlayers: (value: string[]) => set({ players: value }),
+  setWinner: (value: string) => set({ winner: value }),
+  setBalance: (value: string) => set({ balance: value }),
 }));
