@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import { useEthersStore } from "@/store/ethers.store";
 import { handleGetManager } from "@/lib/ethers";
@@ -10,8 +9,6 @@ interface PropType {
 
 const EtherProvider = (props: PropType) => {
   const { children } = props;
-
-  const navigate = useNavigate();
 
   const setProvider = useEthersStore((state: any) => state.setProvider);
   const setAccount = useEthersStore((state: any) => state.setAccount);
@@ -32,9 +29,6 @@ const EtherProvider = (props: PropType) => {
     // Check routing
     const manager = await handleGetManager(contract);
     console.log(manager, manager);
-
-    if (manager?.manager === accounts[0]) navigate("/owner");
-    else navigate("/player");
   });
 
   return <div>{children}</div>;

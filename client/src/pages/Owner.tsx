@@ -20,7 +20,6 @@ const Owner = () => {
   const setPlayers = useEthersStore((state: any) => state.setPlayers);
   const setWinner = useEthersStore((state: any) => state.setWinner);
   const setBalance = useEthersStore((state: any) => state.setBalance);
-  
 
   // const [players, setPlayers] = useState<string[]>([
   //   "0xAbc123456mnq",
@@ -40,7 +39,7 @@ const Owner = () => {
     setWinner(e_handleGetWinner(contract));
     setBalance(e_handleGetBalance(contract));
     //console.log("Pick winner...");
-    
+
     setDiceValue(value);
   };
 

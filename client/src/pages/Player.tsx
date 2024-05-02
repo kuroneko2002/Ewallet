@@ -1,20 +1,28 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ethers } from "ethers";
 import Marquee from "react-fast-marquee";
 import ReactCardFlip from "react-card-flip";
 import { useEthersStore } from "@/store/ethers.store";
 import { toast } from "react-toastify";
 import {
   handleParticipant as e_handleParticipant,
+  handleGetManager as e_handleGetManager,
 } from "@/lib/ethers";
 
 import WinnerCard from "@/components/WinnerCard";
+import { contractAbi, contractAddress } from "@/constants";
 
 const Player = () => {
   const [value, setValue] = useState<string>("");
   const [isFlipped, setIsFlipped] = useState<boolean>(true);
-  const contract = useEthersStore((state: any) => state.contract);
+
+  const navigate = useNavigate();
+
   const provider = useEthersStore((state: any) => state.provider);
+  const contract = useEthersStore((state: any) => state.contract);
   const account = useEthersStore((state: any) => state.account);
+  const setAccount = useEthersStore((state: any) => state.setAccount);
   const winner = useEthersStore((state: any) => state.winner);
 
   const handlePlay = (e: React.FormEvent<HTMLFormElement>) => {
@@ -32,6 +40,27 @@ const Player = () => {
     setValue("");
   };
 
+  const handleAccountChange = async (...args: any) => {
+    const accounts = args[0];
+    const currentAccount: string = accounts[0];
+    setAccount(currentAccount);
+
+    const signer = provider.getSigner();
+    const contractIns = new ethers.Contract(
+      contractAddress,
+      contractAbi,
+      signer
+    );
+
+    const res = await e_handleGetManager(contractIns);
+    console.log("ACCOUNT CHANNGED FROM PLAYER", currentAccount, res?.manager);
+
+    if (currentAccount && res?.manager) {
+      if (currentAccount.toLowerCase() === res?.manager.toLowerCase())
+        navigate("/owner");
+    }
+  };
+
   useEffect(() => {
     const timer = setInterval(() => {
       setIsFlipped(!isFlipped);
@@ -39,6 +68,14 @@ const Player = () => {
 
     return () => {
       clearInterval(timer);
+    };
+  });
+
+  useEffect(() => {
+    window.ethereum?.on("accountsChanged", handleAccountChange);
+
+    return () => {
+      window.ethereum?.removeListener("accountsChanged", handleAccountChange);
     };
   });
 
@@ -69,12 +106,14 @@ const Player = () => {
             <div className="w-[100%] md:w-[48%] border border-gray-500 p-4 rounded-xl">
               <h1 className="text-xl font-bold">Wallet Address</h1>
               <p className="text-2xl mt-5 max-w-[500px] truncate">
-                0xAbczyx123456
+                {account ? account : "Null"}
               </p>
             </div>
             <div className="w-[100%] md:w-[48%] border border-gray-500 p-4 rounded-xl">
-              <h1 className="text-xl font-bold">Current Balance</h1>
-              <p className="text-2xl mt-5 max-w-[500px] truncate">10.000 ETH</p>
+              <h1 className="text-xl font-bold">Balance Type</h1>
+              <p className="text-2xl mt-5 max-w-[500px] truncate">
+                Ethereum (ETH)
+              </p>
             </div>
           </div>
           <div className="relative mt-10 w-full flex">

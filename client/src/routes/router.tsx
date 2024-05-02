@@ -7,7 +7,6 @@ import Player from "@/pages/Player";
 import Owner from "@/pages/Owner";
 
 import { MY_ROUTE } from "./router.constant";
-import RouterProvider from "@/providers/RouterProvider";
 
 export const router = createBrowserRouter([
   {
@@ -16,11 +15,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: MY_ROUTE.HOME,
-        element: (
-          <RouterProvider>
-            <Home />
-          </RouterProvider>
-        ),
+        element: <Home />,
       },
     ],
   },
@@ -30,11 +25,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: MY_ROUTE.PLAYER,
-        element: (
-          <RouterProvider>
-            <Player />
-          </RouterProvider>
-        ),
+        element: <Player />,
       },
     ],
   },
@@ -44,11 +35,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: MY_ROUTE.OWNER,
-        element: (
-          <RouterProvider>
-            <Owner />
-          </RouterProvider>
-        ),
+        element: <Owner />,
       },
     ],
   },

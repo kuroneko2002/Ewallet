@@ -24,7 +24,7 @@ const Home = () => {
 
       // Check routing
       const manager = await handleGetManager(res?.contractIns);
-      console.log(manager);
+      console.log(res);
 
       if (manager?.manager === res?.account) navigate("/owner");
       else navigate("/player");
