@@ -21,6 +21,7 @@ const Player = () => {
 
   const provider = useEthersStore((state: any) => state.provider);
   const contract = useEthersStore((state: any) => state.contract);
+  console.log("contract:",contract);
   const account = useEthersStore((state: any) => state.account);
   const setAccount = useEthersStore((state: any) => state.setAccount);
   const winner = useEthersStore((state: any) => state.winner);
@@ -45,7 +46,7 @@ const Player = () => {
     const currentAccount: string = accounts[0];
     setAccount(currentAccount);
 
-    const signer = provider.getSigner();
+    const signer = provider.getSigner(account);
     const contractIns = new ethers.Contract(
       contractAddress,
       contractAbi,
@@ -90,9 +91,12 @@ const Player = () => {
         </Marquee>
       </div>
       <section className="mx-auto max-w-screen-lg p-6">
+        {
+          winner !== "" && 
         <div className="my-10">
           <WinnerCard reward={5} />
         </div>
+        }
         <form
           className="bg-secondary-purple p-4 rounded-xl"
           onSubmit={(e) => {
