@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import {
   handleParticipant as e_handleParticipant,
   handleGetManager as e_handleGetManager,
+  handleGetWinner as e_handleGetWinner,
 } from "@/lib/ethers";
 
 import WinnerCard from "@/components/WinnerCard";
@@ -20,11 +21,13 @@ const Player = () => {
   const navigate = useNavigate();
 
   const provider = useEthersStore((state: any) => state.provider);
-  const contract = useEthersStore((state: any) => state.contract);
-  console.log("contract:",contract);
   const account = useEthersStore((state: any) => state.account);
-  const setAccount = useEthersStore((state: any) => state.setAccount);
+  const contract = useEthersStore((state: any) => state.contract);
   const winner = useEthersStore((state: any) => state.winner);
+
+  const setAccount = useEthersStore((state: any) => state.setAccount);
+  const setContract = useEthersStore((state: any) => state.setContract);
+  const setWinner = useEthersStore((state: any) => state.setWinner);
 
   const handlePlay = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,6 +66,43 @@ const Player = () => {
   };
 
   useEffect(() => {
+    const fetchData = async (contract: any) => {
+      try {
+        setWinner(await e_handleGetWinner(contract));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    const metamaskAcc = JSON.parse(sessionStorage.getItem("metamaskAccount") || "");
+    if (account === "") {
+      if (!metamaskAcc) {
+        navigate("/");
+        return;
+      }
+      setAccount(metamaskAcc);
+      const signer = provider.getSigner(metamaskAcc);
+      const contractIns = new ethers.Contract(
+        contractAddress,
+        contractAbi,
+        signer
+      );
+      setContract(contractIns);
+      fetchData(contractIns);
+    }
+    else {
+      const signer = provider.getSigner(account);
+      const contractIns = new ethers.Contract(
+        contractAddress,
+        contractAbi,
+        signer
+      );
+      setContract(contractIns);
+      fetchData(contractIns);
+    }
+  }, []);
+
+  useEffect(() => {
     const timer = setInterval(() => {
       setIsFlipped(!isFlipped);
     }, 1000);
@@ -92,10 +132,10 @@ const Player = () => {
       </div>
       <section className="mx-auto max-w-screen-lg p-6">
         {
-          winner !== "" && 
-        <div className="my-10">
-          <WinnerCard reward={5} />
-        </div>
+          winner.toLowerCase() === account &&
+          <div className="my-10">
+            <WinnerCard reward={5} />
+          </div>
         }
         <form
           className="bg-secondary-purple p-4 rounded-xl"

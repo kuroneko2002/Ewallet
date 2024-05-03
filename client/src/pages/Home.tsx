@@ -8,7 +8,6 @@ const Home = () => {
 
   const provider = useEthersStore((state: any) => state.provider);
   const setAccount = useEthersStore((state: any) => state.setAccount);
-  const setContract = useEthersStore((state: any) => state.setContract);
   const setIsOpen = useEthersStore((state: any) => state.setIsOpen);
 
   const handleLoginWithMetaMask = async () => {
@@ -16,17 +15,15 @@ const Home = () => {
 
     if (res) {
       setAccount(res?.account);
-      setContract(res?.contractIns);
       setIsOpen(res?.isOpen);
 
       // Save data to session storage
       sessionStorage.setItem("metamaskAccount", JSON.stringify(res?.account));
+      console.log(res);
 
       // Check routing
       const manager = await handleGetManager(res?.contractIns);
-      console.log(res);
-
-      if (manager?.manager === res?.account) navigate("/owner");
+      if ((manager?.manager)?.toLowerCase() === res?.account) navigate("/owner");
       else navigate("/player");
     }
   };
