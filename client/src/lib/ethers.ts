@@ -37,7 +37,6 @@ export const connectToMetaMask = async (
 export const handleGetManager = async (contract: any) => {
   try {
     const manager = await contract.getManager();
-    console.log("Contract manager:", manager);
 
     return {
       manager: manager,
@@ -127,7 +126,7 @@ export const handleGetBalance = async (contract: any) => {
     try {
       const balance = await contract.getBalance();
       console.log("Contract balance:", ethers.utils.formatEther(balance));
-      return balance;
+      return (ethers.utils.formatEther(balance)).toString();
     } catch (error) {
       console.error("Error calling getBalance():", error);
     }
