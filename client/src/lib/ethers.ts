@@ -160,3 +160,25 @@ export const handleReopen = async (
     }
   }
 };
+
+export const handleGetIsOpen = async (contract: any) => {
+  if (contract) {
+    try {
+      const isOpen = await contract.getIsOpen();
+      return isOpen;
+    } catch (error) {
+      console.error("Error calling getIsOpen():", error);
+    }
+  }
+};
+
+export const handleGetAmountWon = async (contract: any) => {
+  if (contract) {
+    try {
+      const amountWon = await contract.getAmountWon();
+      return ethers.utils.formatEther(amountWon);
+    } catch (error) {
+      console.error("Error calling getAmountWon():", error);
+    }
+  }
+};

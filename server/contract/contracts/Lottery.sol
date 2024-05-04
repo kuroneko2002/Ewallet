@@ -7,6 +7,7 @@ contract Lottery {
     address public owner;
     address[] public players;
     address public winner;
+    uint public amountWon;
     uint public minimumBet;
     uint public randomNumber;
     bool public lotteryOpen;
@@ -49,7 +50,7 @@ contract Lottery {
         winner = players[randomNumber];
         uint balance = address(this).balance;
         uint deducted = balance / players.length; // lottery fee and belong to lottery owner by call withdrawFund function
-        uint amountWon = balance - deducted;
+        amountWon = balance - deducted;
         
         payable(winner).transfer(amountWon);
         emit LotteryClosed(winner, amountWon);
@@ -85,4 +86,8 @@ contract Lottery {
     function getIsOpen() public view returns (bool) {
         return lotteryOpen;
     }    
+    
+    function getAmountWon() public view returns (uint) {
+        return amountWon;
+    }  
 }

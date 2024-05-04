@@ -24,6 +24,7 @@ const PickWinnerCard = (props: PropType) => {
           setDiceValue(0);
         }}
       >
+        Lottery is closed! 
         Click to start new turn
       </button>
     </div>

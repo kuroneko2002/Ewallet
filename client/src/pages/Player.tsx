@@ -9,6 +9,7 @@ import {
   handleParticipant as e_handleParticipant,
   handleGetManager as e_handleGetManager,
   handleGetWinner as e_handleGetWinner,
+  handleGetAmountWon as e_handleGetAmountWon,
 } from "@/lib/ethers";
 
 import WinnerCard from "@/components/WinnerCard";
@@ -24,10 +25,12 @@ const Player = () => {
   const account = useEthersStore((state: any) => state.account);
   const contract = useEthersStore((state: any) => state.contract);
   const winner = useEthersStore((state: any) => state.winner);
+  const amountWon = useEthersStore((state: any) => state.amountWon);
 
   const setAccount = useEthersStore((state: any) => state.setAccount);
   const setContract = useEthersStore((state: any) => state.setContract);
   const setWinner = useEthersStore((state: any) => state.setWinner);
+  const setAmountWon = useEthersStore((state: any) => state.setAmountWon);
 
   const handlePlay = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,14 +39,12 @@ const Player = () => {
       toast.error("Please type ETH to play!");
       return;
     }
-
-    console.log(value);
     e_handleParticipant(contract, provider, account);
     toast.success("Play next turn successfully!");
-
     setValue("");
   };
 
+  // changing metamask accounts
   const handleAccountChange = async (...args: any) => {
     const accounts = args[0];
     const currentAccount: string = accounts[0];
@@ -57,7 +58,8 @@ const Player = () => {
     );
 
     const res = await e_handleGetManager(contractIns);
-    console.log("ACCOUNT CHANNGED FROM PLAYER", currentAccount, res?.manager);
+    console.log("ACCOUNT CHANGED FROM PLAYER", currentAccount, res?.manager);
+    sessionStorage.setItem("metamaskAccount", JSON.stringify(currentAccount));
 
     if (currentAccount && res?.manager) {
       if (currentAccount?.toLowerCase() === res?.manager?.toLowerCase())
@@ -65,23 +67,27 @@ const Player = () => {
     }
   };
 
+  // useEffect functions
   useEffect(() => {
     const fetchData = async (contract: any) => {
       try {
+        // prepare data for rendering
         setWinner(await e_handleGetWinner(contract));
+        setAmountWon(await e_handleGetAmountWon(contract));
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-
+    // check data of account saved in session storage
     const metamaskAcc = JSON.parse(
-      sessionStorage.getItem("metamaskAccount") || ""
+      sessionStorage.getItem("metamaskAccount") || '""'
     );
-    if (account === "") {
-      if (!metamaskAcc) {
+    if (account === "") {   // lost data of current account
+      if (!metamaskAcc) {   // no saved account in storage
         navigate("/");
         return;
       }
+      // use account data saved in storage
       setAccount(metamaskAcc);
       const signer = provider.getSigner(metamaskAcc);
       const contractIns = new ethers.Contract(
@@ -135,7 +141,7 @@ const Player = () => {
       <section className="mx-auto max-w-screen-lg p-6">
         {winner.toLowerCase() === account && (
           <div className="my-10">
-            <WinnerCard reward={5} />
+            <WinnerCard reward={amountWon} />
           </div>
         )}
         <form

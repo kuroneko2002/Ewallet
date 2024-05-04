@@ -11,14 +11,14 @@ const Header = () => {
           </h1>
         </div>
       </Link>
-      <div className="flex items-center gap-5">
+      {/* <div className="flex items-center gap-5">
         <Link to="/player">
           <h1 className="font-bold text-xl text-primary-yellow">Player</h1>
         </Link>
         <Link to="/owner">
           <h1 className="font-bold text-xl text-primary-yellow">Owner</h1>
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 };
