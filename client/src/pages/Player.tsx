@@ -60,7 +60,7 @@ const Player = () => {
     console.log("ACCOUNT CHANNGED FROM PLAYER", currentAccount, res?.manager);
 
     if (currentAccount && res?.manager) {
-      if (currentAccount.toLowerCase() === res?.manager.toLowerCase())
+      if (currentAccount?.toLowerCase() === res?.manager?.toLowerCase())
         navigate("/owner");
     }
   };
@@ -70,11 +70,13 @@ const Player = () => {
       try {
         setWinner(await e_handleGetWinner(contract));
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
 
-    const metamaskAcc = JSON.parse(sessionStorage.getItem("metamaskAccount") || "");
+    const metamaskAcc = JSON.parse(
+      sessionStorage.getItem("metamaskAccount") || ""
+    );
     if (account === "") {
       if (!metamaskAcc) {
         navigate("/");
@@ -89,8 +91,7 @@ const Player = () => {
       );
       setContract(contractIns);
       fetchData(contractIns);
-    }
-    else {
+    } else {
       const signer = provider.getSigner(account);
       const contractIns = new ethers.Contract(
         contractAddress,
@@ -100,6 +101,7 @@ const Player = () => {
       setContract(contractIns);
       fetchData(contractIns);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -131,12 +133,11 @@ const Player = () => {
         </Marquee>
       </div>
       <section className="mx-auto max-w-screen-lg p-6">
-        {
-          winner.toLowerCase() === account &&
+        {winner.toLowerCase() === account && (
           <div className="my-10">
             <WinnerCard reward={5} />
           </div>
-        }
+        )}
         <form
           className="bg-secondary-purple p-4 rounded-xl"
           onSubmit={(e) => {
