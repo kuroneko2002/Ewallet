@@ -10,6 +10,7 @@ import {
   handleGetManager as e_handleGetManager,
   handleGetWinner as e_handleGetWinner,
   handleGetAmountWon as e_handleGetAmountWon,
+  handleGetTransactions as e_handleGetTransactions,
 } from "@/lib/ethers";
 
 import WinnerCard from "@/components/WinnerCard";
@@ -26,13 +27,16 @@ const Player = () => {
   const contract = useEthersStore((state: any) => state.contract);
   const winner = useEthersStore((state: any) => state.winner);
   const amountWon = useEthersStore((state: any) => state.amountWon);
+  const transactions = useEthersStore((state: any) => state.transactions);
+  console.log("transactions", transactions);
 
   const setAccount = useEthersStore((state: any) => state.setAccount);
   const setContract = useEthersStore((state: any) => state.setContract);
   const setWinner = useEthersStore((state: any) => state.setWinner);
   const setAmountWon = useEthersStore((state: any) => state.setAmountWon);
+  const setTransactions = useEthersStore((state: any) => state.setTransactions);
 
-  const handlePlay = (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePlay = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (value === "") {
@@ -40,6 +44,7 @@ const Player = () => {
       return;
     }
     e_handleParticipant(contract, provider, account);
+    setTransactions(await e_handleGetTransactions(contract));
     toast.success("Play next turn successfully!");
     setValue("");
   };
@@ -74,6 +79,7 @@ const Player = () => {
         // prepare data for rendering
         setWinner(await e_handleGetWinner(contract));
         setAmountWon(await e_handleGetAmountWon(contract));
+        setTransactions(await e_handleGetTransactions(contract));
       } catch (error) {
         console.error("Error fetching data:", error);
       }

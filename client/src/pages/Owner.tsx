@@ -13,6 +13,7 @@ import {
   handleWithdrawFunds as e_handleWithdrawFunds,
   handleGetIsOpen as e_handleGetIsOpen,
   handleGetAmountWon as e_handleGetAmountWon,
+  handleGetTransactions as e_handleGetTransactions
 } from "@/lib/ethers";
 
 import Dice from "react-dice-roll";
@@ -26,6 +27,8 @@ const Owner = () => {
   const balance = useEthersStore((state: any) => state.balance);
   const amountWon = useEthersStore((state: any) => state.amountWon);
   const isOpen = useEthersStore((state: any) => state.isOpen);
+  const transactions = useEthersStore((state: any) => state.transactions);
+  console.log("transactions", transactions);
 
   const setPlayers = useEthersStore((state: any) => state.setPlayers);
   const setWinner = useEthersStore((state: any) => state.setWinner);
@@ -34,6 +37,7 @@ const Owner = () => {
   const setContract = useEthersStore((state: any) => state.setContract);
   const setAmountWon = useEthersStore((state: any) => state.setAmountWon);
   const setIsOpen = useEthersStore((state: any) => state.setIsOpen);
+  const setTransactions = useEthersStore((state: any) => state.setTransactions);
 
   const [diceValue, setDiceValue] = useState<number>(0);
 
@@ -77,6 +81,7 @@ const Owner = () => {
     setBalance(await e_handleGetBalance(contract));
     setIsOpen(await e_handleGetIsOpen(contract));
     setAmountWon(await e_handleGetAmountWon(contract));
+    setTransactions(await e_handleGetTransactions(contract));
     setDiceValue(value);
   };
   const handleReopen = async () => {
@@ -85,6 +90,7 @@ const Owner = () => {
     setBalance(await e_handleGetBalance(contract));
     await e_handleReopen(contract, provider, account);
     setIsOpen(await e_handleGetIsOpen(contract));
+    setTransactions(await e_handleGetTransactions(contract));
   };
 
   // use effect functions
@@ -97,7 +103,7 @@ const Owner = () => {
         setAmountWon(await e_handleGetAmountWon(contract));
         setWinner(await e_handleGetWinner(contract));
         setIsOpen(await e_handleGetIsOpen(contract));
-
+        setTransactions(await e_handleGetTransactions(contract));
       } catch (error) {
         console.error("Error fetching data:", error);
       }

@@ -10,6 +10,7 @@ export const useEthersStore = create((set) => ({
   winner: "",
   balance: "0 ETH",
   amountWon: 0,
+  transactions:{},
   setProvider: (value: ethers.providers.JsonRpcProvider) =>
     set({ provider: value }),
   setAccount: (value: string) => set({ account: value }),
@@ -19,4 +20,5 @@ export const useEthersStore = create((set) => ({
   setWinner: (value: string) => set({ winner: value }),
   setBalance: (value: string) => set({ balance: value }),
   setAmountWon: (value: any) => set({ amountWon: value }),
+  setTransactions: (value: any) => set({ transactions: value }),
 }));

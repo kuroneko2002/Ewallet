@@ -182,3 +182,21 @@ export const handleGetAmountWon = async (contract: any) => {
     }
   }
 };
+
+export const handleGetTransactions = async (contract: any) => {
+  if (contract) {
+    try {
+      const { senders, receivers, amounts, timestamps } = await contract.getTransactions();
+      const dateArray = timestamps.map((timestamp: any) => new Date(parseInt(timestamp._hex, 16) * 1000));
+      const fixedAmounts = amounts.map((amount: any) => ethers.utils.formatEther(amount));
+      return {
+        senders: senders,
+        receivers: receivers,
+        amounts: fixedAmounts,
+        timestamps: dateArray,
+      };
+    } catch (error) {
+      console.error("Error calling getTransactions():", error);
+    }
+  }
+};
