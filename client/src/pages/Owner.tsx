@@ -13,11 +13,12 @@ import {
   handleWithdrawFunds as e_handleWithdrawFunds,
   handleGetIsOpen as e_handleGetIsOpen,
   handleGetAmountWon as e_handleGetAmountWon,
-  handleGetTransactions as e_handleGetTransactions
+  handleGetTransactions as e_handleGetTransactions,
 } from "@/lib/ethers";
 
 import Dice from "react-dice-roll";
 import PickWinnerCard from "@/components/PickWinnerCard";
+import TransactionHistory from "@/components/TransactionHistory";
 
 const Owner = () => {
   const provider = useEthersStore((state: any) => state.provider);
@@ -28,7 +29,7 @@ const Owner = () => {
   const amountWon = useEthersStore((state: any) => state.amountWon);
   const isOpen = useEthersStore((state: any) => state.isOpen);
   const transactions = useEthersStore((state: any) => state.transactions);
-  console.log("transactions", transactions);
+  // console.log("transactions", transactions);
 
   const setPlayers = useEthersStore((state: any) => state.setPlayers);
   const setWinner = useEthersStore((state: any) => state.setWinner);
@@ -40,6 +41,7 @@ const Owner = () => {
   const setTransactions = useEthersStore((state: any) => state.setTransactions);
 
   const [diceValue, setDiceValue] = useState<number>(0);
+  const [formatTrans, setFormatTrans] = useState<any>([]);
 
   const navigate = useNavigate();
 
@@ -113,8 +115,10 @@ const Owner = () => {
     const metamaskAcc = JSON.parse(
       sessionStorage.getItem("metamaskAccount") || '""'
     );
-    if (account === "") {   // lost data of current account
-      if (!metamaskAcc) {   // no saved account in storage
+    if (account === "") {
+      // lost data of current account
+      if (!metamaskAcc) {
+        // no saved account in storage
         navigate("/");
         return;
       }
@@ -140,6 +144,31 @@ const Owner = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleFormatTrans = () => {
+    if (transactions && transactions?.senders) {
+      const formattedTransactions = transactions?.senders?.map(
+        (sender: any, index: number) => {
+          return {
+            sender: sender,
+            receiver: transactions.receivers[index],
+            amount: transactions.amounts[index],
+            timestamp:
+              transactions.timestamps[index].toDateString() +
+              " " +
+              transactions.timestamps[index].toLocaleTimeString(),
+          };
+        }
+      );
+
+      setFormatTrans(formattedTransactions);
+    }
+  };
+
+  useEffect(() => {
+    handleFormatTrans();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactions]);
 
   useEffect(() => {
     window.ethereum?.on("accountsChanged", handleAccountChange);
@@ -202,7 +231,7 @@ const Owner = () => {
               <h1 className="text-3xl font-bold">Pick Winner</h1>
             </div>
             <div className="flex justify-center">
-              {(isOpen === false || diceValue !== 0) ? (
+              {isOpen === false || diceValue !== 0 ? (
                 <div
                   className="w-full"
                   onClick={() => {
@@ -224,6 +253,9 @@ const Owner = () => {
                 </div>
               )}
             </div>
+          </div>
+          <div className="my-10 overflow-x-auto">
+            <TransactionHistory transaction={formatTrans} />
           </div>
         </div>
       </section>

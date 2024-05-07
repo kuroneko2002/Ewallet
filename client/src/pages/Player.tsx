@@ -15,10 +15,12 @@ import {
 
 import WinnerCard from "@/components/WinnerCard";
 import { contractAbi, contractAddress } from "@/constants";
+import TransactionHistory from "@/components/TransactionHistory";
 
 const Player = () => {
   const [value, setValue] = useState<string>("");
   const [isFlipped, setIsFlipped] = useState<boolean>(true);
+  const [formatTrans, setFormatTrans] = useState<any>([]);
 
   const navigate = useNavigate();
 
@@ -88,8 +90,10 @@ const Player = () => {
     const metamaskAcc = JSON.parse(
       sessionStorage.getItem("metamaskAccount") || '""'
     );
-    if (account === "") {   // lost data of current account
-      if (!metamaskAcc) {   // no saved account in storage
+    if (account === "") {
+      // lost data of current account
+      if (!metamaskAcc) {
+        // no saved account in storage
         navigate("/");
         return;
       }
@@ -125,6 +129,31 @@ const Player = () => {
       clearInterval(timer);
     };
   });
+
+  const handleFormatTrans = () => {
+    if (transactions && transactions?.senders) {
+      const formattedTransactions = transactions?.senders?.map(
+        (sender: any, index: number) => {
+          return {
+            sender: sender,
+            receiver: transactions.receivers[index],
+            amount: transactions.amounts[index],
+            timestamp:
+              transactions.timestamps[index].toDateString() +
+              " " +
+              transactions.timestamps[index].toLocaleTimeString(),
+          };
+        }
+      );
+
+      setFormatTrans(formattedTransactions);
+    }
+  };
+
+  useEffect(() => {
+    handleFormatTrans();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactions]);
 
   useEffect(() => {
     window.ethereum?.on("accountsChanged", handleAccountChange);
@@ -207,6 +236,9 @@ const Player = () => {
           <button className="w-full mt-10 bg-gradient-to-b from-primary-yellow to-secondary-yellow px-4 py-2 rounded-md text-[30px] font-bold">
             Play Now
           </button>
+          <div className="my-10 overflow-x-auto">
+            <TransactionHistory transaction={formatTrans} />
+          </div>
         </form>
       </section>
     </div>
