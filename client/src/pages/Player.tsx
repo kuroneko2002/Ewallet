@@ -30,7 +30,6 @@ const Player = () => {
   const winner = useEthersStore((state: any) => state.winner);
   const amountWon = useEthersStore((state: any) => state.amountWon);
   const transactions = useEthersStore((state: any) => state.transactions);
-  console.log("transactions", transactions);
 
   const setAccount = useEthersStore((state: any) => state.setAccount);
   const setContract = useEthersStore((state: any) => state.setContract);
@@ -45,7 +44,7 @@ const Player = () => {
       toast.error("Please type ETH to play!");
       return;
     }
-    e_handleParticipant(contract, provider, account);
+    await e_handleParticipant(contract, provider, account);
     setTransactions(await e_handleGetTransactions(contract));
     toast.success("Play next turn successfully!");
     setValue("");
@@ -237,7 +236,7 @@ const Player = () => {
             Play Now
           </button>
           <div className="my-10 overflow-x-auto">
-            <TransactionHistory transaction={formatTrans} />
+            <TransactionHistory transaction={formatTrans} account= {account} />
           </div>
         </form>
       </section>

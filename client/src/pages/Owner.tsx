@@ -29,7 +29,6 @@ const Owner = () => {
   const amountWon = useEthersStore((state: any) => state.amountWon);
   const isOpen = useEthersStore((state: any) => state.isOpen);
   const transactions = useEthersStore((state: any) => state.transactions);
-  // console.log("transactions", transactions);
 
   const setPlayers = useEthersStore((state: any) => state.setPlayers);
   const setWinner = useEthersStore((state: any) => state.setWinner);
@@ -255,7 +254,7 @@ const Owner = () => {
             </div>
           </div>
           <div className="my-10 overflow-x-auto">
-            <TransactionHistory transaction={formatTrans} />
+            <TransactionHistory transaction={formatTrans} account= {account} />
           </div>
         </div>
       </section>
