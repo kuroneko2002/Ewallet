@@ -31,8 +31,6 @@ const TransactionHistory = (props: PropType) => {
           </thead>
           <tbody className="bg-primary-purple divide-y divide-gray-200">
             {reversedTransactions?.map((trans: any, index: number) => {
-              console.log(trans);
-
               return (
                 <tr key={index}>
                   <td className="max-w-[230px] truncate px-6 py-4 whitespace-nowrap">

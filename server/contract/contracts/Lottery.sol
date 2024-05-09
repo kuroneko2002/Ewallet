@@ -55,9 +55,9 @@ contract Lottery {
     function pickWinner() public payable onlyOwner onlyWhenOpen {
         require(players.length > 0, "No players in the lottery");
         uint seed = block.timestamp + block.difficulty + players.length;
-        randomNumber = uint(keccak256(abi.encodePacked(blockhash(block.number - 1), seed))) % players.length;
+        randomNumber = uint(keccak256(abi.encodePacked(blockhash(block.number - 1), seed)));
         
-        winner = players[randomNumber];
+        winner = players[(randomNumber % players.length)];
         uint balance = address(this).balance;
         uint deducted = balance / players.length; // lottery fee and belong to lottery owner by call withdrawFund function
         amountWon = balance - deducted;
@@ -118,4 +118,9 @@ contract Lottery {
             timestamps[i] = transaction.timestamp;
         }
     }
+    
+    function getRandomNumber() public view returns (uint) {
+        return randomNumber;
+    }    
+
 }

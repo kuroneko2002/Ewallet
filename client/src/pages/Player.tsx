@@ -11,6 +11,7 @@ import {
   handleGetWinner as e_handleGetWinner,
   handleGetAmountWon as e_handleGetAmountWon,
   handleGetTransactions as e_handleGetTransactions,
+  handleGetRandomNumber as e_handleGetRandomNumber,
 } from "@/lib/ethers";
 
 import WinnerCard from "@/components/WinnerCard";
@@ -30,12 +31,14 @@ const Player = () => {
   const winner = useEthersStore((state: any) => state.winner);
   const amountWon = useEthersStore((state: any) => state.amountWon);
   const transactions = useEthersStore((state: any) => state.transactions);
+  const randomNumber = useEthersStore((state: any) => state.randomNumber);
 
   const setAccount = useEthersStore((state: any) => state.setAccount);
   const setContract = useEthersStore((state: any) => state.setContract);
   const setWinner = useEthersStore((state: any) => state.setWinner);
   const setAmountWon = useEthersStore((state: any) => state.setAmountWon);
   const setTransactions = useEthersStore((state: any) => state.setTransactions);
+  const setRandomNumber = useEthersStore((state: any) => state.setRandomNumber);
 
   const handlePlay = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -81,6 +84,8 @@ const Player = () => {
         setWinner(await e_handleGetWinner(contract));
         setAmountWon(await e_handleGetAmountWon(contract));
         setTransactions(await e_handleGetTransactions(contract));
+        setRandomNumber(await e_handleGetRandomNumber(contract));
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -171,6 +176,12 @@ const Player = () => {
             <h1>{winner}</h1>
           </div>
         </Marquee>
+        <Marquee>
+          <div className="flex items-center gap-3 text-xl font-bold">
+            <h1 className="text-primary-yellow">Generated random number:</h1>
+            <h1>{randomNumber}</h1>
+          </div>
+        </Marquee>
       </div>
       <section className="mx-auto max-w-screen-lg p-6">
         {winner.toLowerCase() === account && (
@@ -236,7 +247,7 @@ const Player = () => {
             Play Now
           </button>
           <div className="my-10 overflow-x-auto">
-            <TransactionHistory transaction={formatTrans} account= {account} />
+            <TransactionHistory transaction={formatTrans} account={account} />
           </div>
         </form>
       </section>

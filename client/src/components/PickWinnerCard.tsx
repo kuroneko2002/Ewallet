@@ -9,9 +9,13 @@ const PickWinnerCard = (props: PropType) => {
   const { balance, setDiceValue } = props;
 
   const winner = useEthersStore((state: any) => state.winner);
+  const randomNumber = useEthersStore((state: any) => state.randomNumber);
 
   return (
     <div className="w-full bg-gradient-to-b from-primary-yellow to-secondary-yellow px-4 py-2 rounded-md flex gap-3 flex-col items-center">
+      <h1 className="text-4xl font-bold text-center max-w-[90%] truncate">
+        Generated random number: {randomNumber}
+      </h1>
       <h1 className="text-4xl font-bold text-center max-w-[90%] truncate">
         Address Winner: {winner}
       </h1>

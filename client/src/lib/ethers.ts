@@ -112,7 +112,6 @@ export const handleGetPlayers = async (contract: any) => {
   if (contract) {
     try {
       const players = await contract.getPlayers();
-      console.log("Players:", players);
 
       return players;
     } catch (error) {
@@ -125,7 +124,6 @@ export const handleGetBalance = async (contract: any) => {
   if (contract) {
     try {
       const balance = await contract.getBalance();
-      console.log("Contract balance:", ethers.utils.formatEther(balance));
       return (ethers.utils.formatEther(balance)).toString();
     } catch (error) {
       console.error("Error calling getBalance():", error);
@@ -180,7 +178,7 @@ export const handleGetAmountWon = async (contract: any) => {
     } catch (error) {
       console.error("Error calling getAmountWon():", error);
     }
-  }
+  }0
 };
 
 export const handleGetTransactions = async (contract: any) => {
@@ -199,4 +197,15 @@ export const handleGetTransactions = async (contract: any) => {
       console.error("Error calling getTransactions():", error);
     }
   }
+};
+
+export const handleGetRandomNumber = async (contract: any) => {
+  if (contract) {
+    try {
+      const randomNumber = await contract.getRandomNumber();
+      return randomNumber?.toString();
+    } catch (error) {
+      console.error("Error calling getRandomNumber():", error);
+    }
+  }0
 };

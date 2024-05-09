@@ -14,6 +14,7 @@ import {
   handleGetIsOpen as e_handleGetIsOpen,
   handleGetAmountWon as e_handleGetAmountWon,
   handleGetTransactions as e_handleGetTransactions,
+  handleGetRandomNumber as e_handleGetRandomNumber,
 } from "@/lib/ethers";
 
 import Dice from "react-dice-roll";
@@ -38,6 +39,7 @@ const Owner = () => {
   const setAmountWon = useEthersStore((state: any) => state.setAmountWon);
   const setIsOpen = useEthersStore((state: any) => state.setIsOpen);
   const setTransactions = useEthersStore((state: any) => state.setTransactions);
+  const setRandomNumber = useEthersStore((state: any) => state.setRandomNumber);
 
   const [diceValue, setDiceValue] = useState<number>(0);
   const [formatTrans, setFormatTrans] = useState<any>([]);
@@ -83,6 +85,7 @@ const Owner = () => {
     setIsOpen(await e_handleGetIsOpen(contract));
     setAmountWon(await e_handleGetAmountWon(contract));
     setTransactions(await e_handleGetTransactions(contract));
+    setRandomNumber(await e_handleGetRandomNumber(contract));
     setDiceValue(value);
   };
   const handleReopen = async () => {
@@ -105,6 +108,7 @@ const Owner = () => {
         setWinner(await e_handleGetWinner(contract));
         setIsOpen(await e_handleGetIsOpen(contract));
         setTransactions(await e_handleGetTransactions(contract));
+        setRandomNumber(await e_handleGetRandomNumber(contract));
       } catch (error) {
         console.error("Error fetching data:", error);
       }
