@@ -12,16 +12,31 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <HomeLayout />,
-    children: [{ path: MY_ROUTE.HOME, element: <Home /> }],
+    children: [
+      {
+        path: MY_ROUTE.HOME,
+        element: <Home />,
+      },
+    ],
   },
   {
     path: "/player",
     element: <HomeLayout />,
-    children: [{ path: MY_ROUTE.PLAYER, element: <Player /> }],
+    children: [
+      {
+        path: MY_ROUTE.PLAYER,
+        element: <Player />,
+      },
+    ],
   },
   {
     path: "/owner",
     element: <HomeLayout />,
-    children: [{ path: MY_ROUTE.OWNER, element: <Owner /> }],
+    children: [
+      {
+        path: MY_ROUTE.OWNER,
+        element: <Owner />,
+      },
+    ],
   },
 ]);

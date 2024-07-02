@@ -14,9 +14,9 @@ const WinnerCard = (props: PropType) => {
       <h2 className="text-2xl text-primary-purple font-bold text-center">
         Your rewards: {reward} ETH
       </h2>
-      <p className="text-xl text-primary-purple font-bold text-center hover:cursor-pointer hover:underline">
+      {/* <p className="text-xl text-primary-purple font-bold text-center hover:cursor-pointer hover:underline">
         Click to accept
-      </p>
+      </p> */}
     </div>
   );
 };
